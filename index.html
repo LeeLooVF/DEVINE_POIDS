@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Devine le Poids ! ⚖️🍔</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --theme-gradient: linear-gradient(135deg, #10b981, #06b6d4, #3b82f6, #8b5cf6);
+            --theme-bar: linear-gradient(90deg, #10b981, #06b6d4, #f59e0b, #ef4444);
+            --accent-scale: #06b6d4;
+            --accent-gold: #f59e0b;
+            --dark-bg: #071118;
+            --card-bg: rgba(15, 29, 42, 0.88);
+            --card-border: rgba(6, 182, 212, 0.3);
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 88% 82%, rgba(6, 182, 212, 0.22) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 60%);
+            color: #f0fdfa;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        header {
+            background: rgba(10, 20, 30, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 2px solid transparent;
+            border-image: var(--theme-bar) 1;
+            padding: 12px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: var(--theme-gradient);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.45);
+        }
+
+        .logo-title h1 {
+            font-size: 18px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #34d399, #38bdf8, #fcd34d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .top-ten-header-btn {
+            font-size: 13px;
+            color: #67e8f9;
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            padding: 0;
+            margin-top: 3px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .top-ten-header-btn:hover, .top-ten-header-btn:active {
+            color: #fcd34d;
+            text-shadow: 0 0 8px rgba(252, 211, 77, 0.6);
+        }
+
+        .score-badge {
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #67e8f9;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            z-index: 10;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 580px;
+            padding: 22px;
+            box-shadow: 0 20px 35px -5px rgba(0, 0, 0, 0.65), 0 0 25px rgba(6, 182, 212, 0.15);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        #welcome-screen h2, #end-screen h2 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, #34d399, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        #welcome-screen p {
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .welcome-icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .start-btn, .action-btn {
+            background: var(--theme-gradient);
+            color: white;
+            border: none;
+            min-height: 52px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn:active, .action-btn:active, .step-btn:active {
+            transform: scale(0.96);
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--theme-bar);
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+        }
+
+        .image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 35vh;
+            max-height: 330px;
+            min-height: 200px;
+            background-color: #03070b;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .weight-reveal-overlay {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 20, 30, 0.92);
+            border: 2px solid #fcd34d;
+            padding: 8px 20px;
+            border-radius: 14px;
+            font-size: 20px;
+            font-weight: 800;
+            color: #fcd34d;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .result-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+            z-index: 10;
+            letter-spacing: 0.5px;
+        }
+
+        .result-badge.correct {
+            background: linear-gradient(135deg, #06d6a0, #00b4d8);
+            color: #ffffff;
+        }
+
+        .result-badge.incorrect {
+            background: linear-gradient(135deg, #ff4b72, #e63946);
+            color: #ffffff;
+        }
+
+        /* JAUGE DE POIDS */
+        .gauge-box {
+            background: rgba(10, 20, 32, 0.75);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 18px;
+            padding: 16px;
+        }
+
+        .gauge-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        .digital-readout {
+            background: #03090e;
+            border: 2px solid rgba(56, 189, 248, 0.45);
+            border-radius: 14px;
+            padding: 8px 22px;
+            min-width: 150px;
+            box-shadow: inset 0 0 12px rgba(6, 182, 212, 0.2);
+        }
+
+        .digital-readout span {
+            font-size: 32px;
+            font-weight: 800;
+            color: #38bdf8;
+            letter-spacing: 1px;
+        }
+
+        .digital-readout small {
+            font-size: 16px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-left: 4px;
+        }
+
+        .step-btn {
+            background: rgba(30, 58, 82, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slider-wrapper {
+            position: relative;
+            margin: 10px 0 6px;
+        }
+
+        .weight-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 14px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #10b981 0%, #38bdf8 35%, #f59e0b 70%, #ef4444 100%);
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .weight-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 4px solid #06b6d4;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+
+        .weight-slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 4px solid #06b6d4;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+            cursor: pointer;
+        }
+
+        .gauge-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 14px;
+            padding: 0 4px;
+        }
+
+        .feedback-container {
+            margin-top: 12px;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .feedback-container.correct-text {
+            color: #a7f3d0;
+            background-color: rgba(6, 214, 160, 0.18);
+            border: 1px solid rgba(6, 214, 160, 0.4);
+        }
+
+        .feedback-container.incorrect-text {
+            color: #fecdd3;
+            background-color: rgba(255, 75, 114, 0.18);
+            border: 1px solid rgba(255, 75, 114, 0.4);
+        }
+
+        .form-group {
+            margin: 18px 0;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px;
+            background-color: rgba(22, 42, 60, 0.85);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent-scale);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+        }
+
+        .celebration-box {
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            border: 1px solid transparent;
+        }
+
+        .secondary-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            min-height: 50px;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* MODALE TOP 10 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 12, 18, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 16px;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background-color: #0f1d2a;
+            border: 1px solid rgba(6, 182, 212, 0.35);
+            border-radius: 22px;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(6, 182, 212, 0.2);
+            text-align: left;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: #fcd34d;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+            max-height: 320px;
+            overflow-y: auto;
+            margin-bottom: 18px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            background-color: rgba(22, 42, 60, 0.7);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .leaderboard-item:nth-child(1) { border-left: 5px solid #fcd34d; }
+        .leaderboard-item:nth-child(2) { border-left: 5px solid #38bdf8; }
+        .leaderboard-item:nth-child(3) { border-left: 5px solid #34d399; }
+
+        .hidden {
+            display: none !important;
+        }
+
+        footer {
+            text-align: center;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #38bdf8;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">⚖️</div>
+            <div class="logo-title">
+                <h1>Devine le Poids !</h1>
+                <button class="top-ten-header-btn" onclick="openLeaderboard()">🏆 Top 10 des Balances</button>
+            </div>
+        </div>
+        <div id="score-display" class="score-badge hidden">Score : 0 / 10 ⚖️</div>
+    </header>
+
+    <div class="main-container">
+        <!-- ÉCRAN D'ACCUEIL -->
+        <div id="welcome-screen" class="card">
+            <div class="welcome-icon">⚖️👀</div>
+            <h2>As-tu le compas dans l'œil ?</h2>
+            <p>Fais glisser la jauge pour estimer le poids de chaque personne.<br>Tu marques <strong>1 point</strong> si tu es à <strong>± 10 kg près</strong> !<br><strong>10 questions au total.</strong></p>
+            <button class="start-btn" onclick="startQuiz()">Monter sur la balance →</button>
+        </div>
+
+        <!-- ÉCRAN DU JEU -->
+        <div id="quiz-screen" class="card hidden">
+            <div class="quiz-header">
+                <span id="question-counter">Question 1 / 10</span>
+                <span>🎯 Tolérance : ± 10 kg</span>
+            </div>
+            
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+
+            <div class="image-wrapper">
+                <div id="result-badge" class="result-badge hidden"></div>
+                <div id="weight-reveal" class="weight-reveal-overlay hidden"></div>
+                <img id="quiz-image" src="" alt="Question">
+            </div>
+
+            <!-- ZONE JAUGE DE POIDS -->
+            <div id="gauge-area" class="gauge-box">
+                <div class="gauge-screen">
+                    <button type="button" class="step-btn" onclick="adjustWeight(-1)">−</button>
+                    <div class="digital-readout">
+                        <span id="gauge-value">120</span><small>KG</small>
+                    </div>
+                    <button type="button" class="step-btn" onclick="adjustWeight(1)">+</button>
+                </div>
+
+                <div class="slider-wrapper">
+                    <input type="range" id="weight-slider" class="weight-slider" min="25" max="250" value="120" oninput="updateGaugeDisplay(this.value)">
+                </div>
+
+                <div class="gauge-labels">
+                    <span>25 kg</span>
+                    <span>100 kg</span>
+                    <span>175 kg</span>
+                    <span>250 kg</span>
+                </div>
+
+                <button class="start-btn" onclick="submitWeight()">Valider ce poids ⚖️</button>
+            </div>
+
+            <!-- ZONE RÉPONSE ET SUIVANT -->
+            <div id="post-answer-area" class="hidden">
+                <div id="feedback-text" class="feedback-container"></div>
+                <button class="action-btn" style="margin-top: 14px;" onclick="nextQuestion()">Personne Suivante ⚖️ →</button>
+            </div>
+        </div>
+
+        <!-- ÉCRAN DE FIN ET SAUVEGARDE -->
+        <div id="end-screen" class="card hidden">
+            <div id="celebration-badge" class="celebration-box"></div>
+            <h2>Pesée Terminée ! 🎯</h2>
+            <p id="final-score-text" style="font-size: 18px; margin: 12px 0; color: #ffffff;"></p>
+            
+            <div class="form-group">
+                <label for="pseudo-input">Entre ton pseudo pour le classement :</label>
+                <input type="text" id="pseudo-input" class="form-input" placeholder="Ton pseudo..." maxlength="20">
+            </div>
+
+            <button id="save-score-btn" class="start-btn" onclick="saveScoreAndRestart()" style="margin-bottom: 10px;">Enregistrer & Rejouer ⚖️</button>
+            <button class="secondary-btn" onclick="startQuiz()">Rejouer sans sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- MODALE DU TOP 10 -->
+    <div id="leaderboard-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🏆 Top 10 des Experts</h3>
+                <button class="close-modal" onclick="closeLeaderboard()">&times;</button>
+            </div>
+            <ul id="leaderboard-list" class="leaderboard-list">
+                <!-- Rempli par le script -->
+            </ul>
+            <button class="start-btn" onclick="closeLeaderboard()" style="margin-bottom: 0;">Fermer</button>
+        </div>
+    </div>
+
+    <footer>
+        Quiz interactif • Devine le Poids ⚖️
+    </footer>
+
+    <script>
+        const API_URL = "https://api-devine-poids.kjh27r4i-70a.workers.dev";
+        const TOLERANCE_KG = 10;
+
+        const questions = [
+            { q: "Q1_171kg.png", weight: 171 },
+            { q: "Q2_132kg.png", weight: 132 },
+            { q: "Q3_218kg.png", weight: 218 },
+            { q: "Q4_50kg.png",  weight: 50  },
+            { q: "Q5_198kg.png", weight: 198 },
+            { q: "Q6_34kg.png",  weight: 34  },
+            { q: "Q7_165kg.png", weight: 165 },
+            { q: "Q8_128kg.png", weight: 128 },
+            { q: "Q9_178kg.png", weight: 178 },
+            { q: "Q10_189kg.png", weight: 189 }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let answered = false;
+        let gameActive = false;
+
+        function startQuiz() {
+            currentIndex = 0;
+            score = 0;
+            gameActive = true;
+            updateScoreDisplay();
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('score-display').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const currentObj = questions[currentIndex];
+            
+            document.getElementById('quiz-image').src = currentObj.q;
+            document.getElementById('question-counter').innerText = `Question ${currentIndex + 1} / ${questions.length}`;
+            
+            const progressPct = (currentIndex / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPct}%`;
+            
+            const slider = document.getElementById('weight-slider');
+            slider.value = 120;
+            updateGaugeDisplay(120);
+
+            document.getElementById('gauge-area').classList.remove('hidden');
+            document.getElementById('post-answer-area').classList.add('hidden');
+            
+            const badge = document.getElementById('result-badge');
+            badge.classList.add('hidden');
+            badge.className = 'result-badge hidden';
+
+            const weightReveal = document.getElementById('weight-reveal');
+            weightReveal.classList.add('hidden');
+        }
+
+        function updateGaugeDisplay(val) {
+            document.getElementById('gauge-value').innerText = val;
+        }
+
+        function adjustWeight(delta) {
+            const slider = document.getElementById('weight-slider');
+            let newVal = parseInt(slider.value, 10) + delta;
+            if (newVal < parseInt(slider.min, 10)) newVal = parseInt(slider.min, 10);
+            if (newVal > parseInt(slider.max, 10)) newVal = parseInt(slider.max, 10);
+            slider.value = newVal;
+            updateGaugeDisplay(newVal);
+        }
+
+        function submitWeight() {
+            if (!gameActive || answered) return;
+            answered = true;
+
+            const userWeight = parseInt(document.getElementById('weight-slider').value, 10);
+            const currentObj = questions[currentIndex];
+            const diff = Math.abs(userWeight - currentObj.weight);
+            const isCorrect = (diff <= TOLERANCE_KG);
+
+            if (isCorrect) score++;
+            updateScoreDisplay();
+
+            const badge = document.getElementById('result-badge');
+            badge.classList.remove('hidden');
+            if (diff === 0) {
+                badge.className = 'result-badge correct';
+                badge.innerText = 'PILE POIL ! 🎯🔥';
+            } else if (isCorrect) {
+                badge.className = 'result-badge correct';
+                badge.innerText = `VALIDÉ ! (à ${diff} kg)`;
+            } else {
+                badge.className = 'result-badge incorrect';
+                badge.innerText = `RATÉ ! (${diff} kg d'écart)`;
+            }
+
+            const weightReveal = document.getElementById('weight-reveal');
+            weightReveal.innerText = `⚖️ Poids réel : ${currentObj.weight} kg`;
+            weightReveal.classList.remove('hidden');
+
+            document.getElementById('gauge-area').classList.add('hidden');
+            document.getElementById('post-answer-area').classList.remove('hidden');
+
+            const feedbackText = document.getElementById('feedback-text');
+            if (diff === 0) {
+                feedbackText.className = 'feedback-container correct-text';
+                feedbackText.innerHTML = `🎯 INCROYABLE ! Tu as trouvé les <strong>${currentObj.weight} kg</strong> au kilo près !`;
+            } else if (isCorrect) {
+                feedbackText.className = 'feedback-container correct-text';
+                feedbackText.innerHTML = `✅ Bien vu ! Tu as mis <strong>${userWeight} kg</strong> pour <strong>${currentObj.weight} kg</strong> (écart de ${diff} kg).`;
+            } else {
+                feedbackText.className = 'feedback-container incorrect-text';
+                feedbackText.innerHTML = `❌ Trop loin ! Tu as estimé <strong>${userWeight} kg</strong> alors que la balance affiche <strong>${currentObj.weight} kg</strong>.`;
+            }
+        }
+
+        function nextQuestion() {
+            if (!gameActive) return;
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            gameActive = false;
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('score-display').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / questions.length) * 100);
+            document.getElementById('final-score-text').innerHTML = `Ton score final : <strong>${score} / ${questions.length}</strong> (${percentage}%)`;
+
+            const celebrationBox = document.getElementById('celebration-badge');
+            if (score <= 4) {
+                celebrationBox.style.backgroundColor = "rgba(255, 75, 114, 0.2)";
+                celebrationBox.style.color = "#fecdd3";
+                celebrationBox.style.borderColor = "rgba(255, 75, 114, 0.4)";
+                celebrationBox.innerHTML = "🍔 Ta balance interne a besoin d'être recalibrée !";
+            } else if (score <= 7) {
+                celebrationBox.style.backgroundColor = "rgba(255, 209, 102, 0.2)";
+                celebrationBox.style.color = "#fcd34d";
+                celebrationBox.style.borderColor = "rgba(255, 209, 102, 0.4)";
+                celebrationBox.innerHTML = "⚖️ Joli coup d'œil ! Tes estimations sont solides.";
+            } else {
+                celebrationBox.style.backgroundColor = "rgba(6, 214, 160, 0.2)";
+                celebrationBox.style.color = "#6ee7b7";
+                celebrationBox.style.borderColor = "rgba(6, 214, 160, 0.4)";
+                celebrationBox.innerHTML = "👑 BALANCE HUMAINE ! Rien ne t'échappe !";
+            }
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').innerText = `Score : ${score} / ${questions.length} ⚖️`;
+        }
+
+        async function saveScoreAndRestart() {
+            const pseudo = document.getElementById('pseudo-input').value.trim() || "Anonyme";
+            const saveBtn = document.getElementById('save-score-btn');
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Enregistrement...";
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pseudo: pseudo, score: score })
+                });
+            } catch (err) {
+                console.error("Erreur serveur :", err);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Enregistrer & Rejouer ⚖️";
+                startQuiz();
+            }
+        }
+
+        async function openLeaderboard() {
+            const modal = document.getElementById('leaderboard-modal');
+            const listContainer = document.getElementById('leaderboard-list');
+            listContainer.innerHTML = `<li style="text-align: center; color: #94a3b8; padding: 20px;">Chargement des scores...</li>`;
+            modal.classList.remove('hidden');
+
+            try {
+                const res = await fetch(API_URL);
+                const top10 = await res.json();
+                listContainer.innerHTML = '';
+
+                if (!top10 || top10.length === 0) {
+                    listContainer.innerHTML = `<li style="text-align: center; color: #94a3b8; padding: 20px;">Aucun score enregistré pour l'instant.</li>`;
+                } else {
+                    top10.forEach((item, index) => {
+                        const li = document.createElement('li');
+                        li.className = 'leaderboard-item';
+                        li.innerHTML = `
+                            <span><strong>#${index + 1}</strong> ${escapeHtml(item.pseudo)}</span>
+                            <span><strong>${item.score} / 10</strong> <small style="color:#94a3b8; margin-left:6px;">(${item.date || ''})</small></span>
+                        `;
+                        listContainer.appendChild(li);
+                    });
+                }
+            } catch (err) {
+                listContainer.innerHTML = `<li style="text-align: center; color: #fecdd3; padding: 20px;">Erreur de connexion au classement.</li>`;
+            }
+        }
+
+        function closeLeaderboard() {
+            document.getElementById('leaderboard-modal').classList.add('hidden');
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
